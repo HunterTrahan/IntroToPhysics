@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
+#include"Sphere.h"
 #include <Gizmos.h>
 #include "PhysicsScene.h"
 
@@ -27,7 +28,11 @@ bool PhysicsSceneApp::startup()
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
 	m_physicScene = new PhysicsScene();
+	m_physicScene->setGravity(glm::vec2(0, 0));
 	m_physicScene->setTimestep(0.01f);
+
+	Sphere* ball = new Sphere(glm::vec2(-40.0f, 0.0f), glm::vec2(10.0f, 30.0f), 3.0f,
+						      5.0f, glm::vec4(1, 0, 0, 1));
 
 	return true;
 }
