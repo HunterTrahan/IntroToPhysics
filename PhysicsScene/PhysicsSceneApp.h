@@ -4,19 +4,19 @@
 #include "Renderer2D.h"
 
 class PhysicsSceneApp : public aie::Application {
-public:
+	public:
 
-	PhysicsSceneApp();
-	virtual ~PhysicsSceneApp();
+		PhysicsSceneApp();
+		virtual ~PhysicsSceneApp();
 
-	virtual bool startup();
-	virtual void shutdown();
+		virtual bool startup();
+		virtual void shutdown();
 
-	virtual void update(float deltaTime);
-	virtual void draw();
+		virtual void update(float deltaTime);
+		virtual void draw();
 
-protected:
+	protected:
 
-	aie::Renderer2D*	m_2dRenderer;
-	aie::Font*			m_font;
+		aie::Renderer2D*	m_2dRenderer;
+		aie::Font*			m_font;
 };
