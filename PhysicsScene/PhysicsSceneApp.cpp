@@ -26,7 +26,8 @@ bool PhysicsSceneApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	//m_physicsScene = new PhysicsScene();
+	m_physicScene = new PhysicsScene();
+	m_physicScene->setTimestep(0.01f);
 
 	return true;
 }
@@ -44,6 +45,11 @@ void PhysicsSceneApp::update(float deltaTime)
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
+	aie::Gizmos::clear();
+
+	m_physicScene->update(deltaTime);
+	m_physicScene->updateGizmos();
+
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -59,6 +65,12 @@ void PhysicsSceneApp::draw()
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
+	static float aspectRatio = 16 / 9.0f;
+	aie::Gizmos::draw2D(glm::ortho<float>(
+						-100, 100, 
+						-100 / aspectRatio, 
+						 100 / aspectRatio,
+						-1.0f, 1.0f));
 	
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
