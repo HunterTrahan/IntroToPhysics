@@ -1,12 +1,12 @@
 #pragma once
-#include <glm\ext.hpp>
 #include "PhysicsObject.h"
+#include "glm\ext.hpp"
 #include <vector>
 
 class PhysicsScene
 {
 	public:
-		PhysicsScene();
+		PhysicsScene() : m_timeStep(0.01f), m_gravity(glm::vec2(0.0f, 0.0f)) {}
 		~PhysicsScene();
 
 		void addActor(PhysicsObject* actor);
@@ -18,13 +18,12 @@ class PhysicsScene
 		void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 		glm::vec2 getGravity() const { return m_gravity; }
 
-		void setTimestep(const float timestep) { m_timestep = timestep; }
-		float getTimestep() const { return m_timestep; }
+		void setTimeStep(const float timeStep) { m_timeStep = timeStep; }
+		float getTimeStep() const { return m_timeStep; }
 
 	protected:
-		glm::vec2 m_gravity;
-		float m_timestep;
-		
-		std::vector<PhysicsObject*> m_actors;
-};
+		glm::vec2	m_gravity;
+		float		m_timeStep;
 
+		std::vector<PhysicsObject*>	m_actors;
+};

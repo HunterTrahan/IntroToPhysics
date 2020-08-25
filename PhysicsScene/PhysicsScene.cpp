@@ -2,13 +2,9 @@
 #include "RigidBody.h"
 #include <list>
 
-PhysicsScene::PhysicsScene() : m_timestep(0.01f), m_gravity(glm::vec2(0,0))
-{
-}
-
 PhysicsScene::~PhysicsScene()
 {
-	for (auto actor : m_actors)
+	for (auto actor : m_actors) 
 	{
 		delete actor;
 	}
@@ -21,9 +17,9 @@ void PhysicsScene::addActor(PhysicsObject* actor)
 
 void PhysicsScene::removeActor(PhysicsObject* actor)
 {
-	for (auto i = m_actors.begin(); i < m_actors.end(); i++)
+	for (auto i = m_actors.begin(); i < m_actors.end(); i++) 
 	{
-		if (*i == actor)
+		if (*i == actor) 
 		{
 			m_actors.erase(i);
 		}
@@ -32,79 +28,71 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 
 void PhysicsScene::update(float deltaTime)
 {
-	//Create a list of objects for which we've checked collisions
+	// create a list of objects for which we've checked collisions
 	static std::list<PhysicsObject*> dirty;
 
-	static float accumlatedTime = 0.0f;
-	accumlatedTime += deltaTime;
+	// store how much time has accumulated since last update
+	static float accumulatedTime = 0.0f;
+	accumulatedTime += deltaTime;
 
-	//While eniough tine has accumulated
-	while (accumlatedTime >= m_timestep)
+	// while enough time has accumulated...
+	while (accumulatedTime >= m_timeStep)
 	{
-		//For each PhysicsObject in m_actors
-		for (auto pActor : m_actors)
+		// for each PhysicsObject in m_actors...
+		for (auto pActor : m_actors) 
 		{
-			//update physics of that object
-			pActor->fixedUpdate(m_gravity, m_timestep);
+			// updated the physics of that object
+			pActor->fixedUpdate(m_gravity, m_timeStep);
 		}
 
-		//Spend time needed for that update
-		accumlatedTime -= m_timestep;
+		// spend the time needed for that update
+		accumulatedTime -= m_timeStep;
 
-		for (auto actor : m_actors)
+		// for every combination of actors...
+		for (auto actor : m_actors) 
 		{
-			for (auto other : m_actors)
+			for (auto other : m_actors) 
 			{
-				//If we aren't checking an actor's collision with itself
+				// if we aren't checking an actor's collision with itself
 				if (actor == other)
-				{
 					continue;
-				}
 
-				//If the actors haven't already been checked
+				// if the actors haven't already been checked
 				if (std::find(dirty.begin(), dirty.end(), actor) != dirty.end() &&
-					std::find(dirty.begin(), dirty.end(), actor) != dirty.end())
-				{
+					std::find(dirty.begin(), dirty.end(), other) != dirty.end())
 					continue;
-				}
 
-				//If the actor and other are rigidbodies
+				// if the actor and other are RigidBodies
 				RigidBody* actorRB = dynamic_cast<RigidBody*>(actor);
 				RigidBody* otherRB = dynamic_cast<RigidBody*>(other);
-
 				if (!actorRB || !otherRB)
-				{
 					continue;
-				}
 
-				//Check the collision
-				if (actorRB->checkCollision(other))
+				// check the collision
+				if (actorRB->checkCollision(otherRB)) 
 				{
-					actorRB->applyForceToActor(otherRB, actorRB->getVelocity() *
-											   actorRB->getMass());
-
-					dirty.push_back(actorRB);
-					dirty.push_back(otherRB);
+					// apply the force of the collision
+					actorRB->applyForceToActor(otherRB, actorRB->getVelocity() * actorRB->getMass());
+					// add each actor to the dirty list
+					dirty.push_back(actor);
+					dirty.push_back(other);
 				}
 			}
 		}
-
 		dirty.clear();
 	}
 }
 
 void PhysicsScene::updateGizmos()
 {
-	for (auto pActor : m_actors)
-	{
+	for (auto pActor : m_actors) {
 		pActor->makeGizmo();
 	}
 }
 
 void PhysicsScene::debugScene()
 {
-	for (auto actor : m_actors)
-	{
+	for (auto actor : m_actors) {
 		actor->debug();
 	}
 }
