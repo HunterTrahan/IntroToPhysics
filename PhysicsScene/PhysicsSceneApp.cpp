@@ -24,21 +24,20 @@ bool PhysicsSceneApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
+	glm::vec2 gravity = glm::vec2(0.0f, -10.0f);
+
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->setGravity(glm::vec2(0, 0));
+	m_physicsScene->setGravity(gravity);
 	m_physicsScene->setTimeStep(0.01f);
 
-	Sphere* ball1 = new Sphere(glm::vec2(-40.0f, 0.0f), glm::vec2(60.0f, 0.0f),
-		8.0f, 8.0f, glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(ball1);
+	glm::vec2 initialPosition = glm::vec2(-60.0f, 0.0f);
+	glm::vec2 finalPosition = glm::vec2(60.0f, 0.0f);
+	glm::vec2 initialVelocity = calculateVelocity(initialPosition, finalPosition, gravity.y, 5.0f);
+	Sphere* ball = new Sphere(initialPosition, initialVelocity, 1.0f, 4.0f, glm::vec4(1.0f, 0.0f, 0.5f, 1.0f));
 
-	Sphere* ball2 = new Sphere(glm::vec2(40.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
-		2.0f, 6.0f, glm::vec4(0, 1, 0, 1));
-	m_physicsScene->addActor(ball2);
+	m_physicsScene->addActor(ball);
 
-	Sphere* ball3 = new Sphere(glm::vec2(60.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
-		1.0f, 4.0f, glm::vec4(0, 0, 1, 1));
-	m_physicsScene->addActor(ball3);
+	setupContinuousDemo(initialPosition, initialVelocity, gravity.y);
 
 	return true;
 }
@@ -57,7 +56,10 @@ void PhysicsSceneApp::update(float deltaTime)
 	aie::Input* input = aie::Input::getInstance();
 
 	// clear the buffer
-	aie::Gizmos::clear();
+	//aie::Gizmos::clear();
+
+	aie::Gizmos::add2DAABB(glm::vec2(-60.0f, 0.0f), glm::vec2(4.0f, 4.0f), glm::vec4(1, 1, 1, 1));
+	aie::Gizmos::add2DAABB(glm::vec2(60.0f, 0.0f), glm::vec2(4.0f, 4.0f), glm::vec4(1, 1, 1, 1));
 
 	// update the PhysicsScene
 	m_physicsScene->update(deltaTime);
@@ -89,4 +91,34 @@ void PhysicsSceneApp::draw()
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+void PhysicsSceneApp::setupContinuousDemo(glm::vec2 initialPosition, glm::vec2 initialVelocity, float gravity)
+{
+	float time = 0.0f;
+	float timeStep = 0.5f;
+	float radius = 1.0f;
+	int segments = 12;
+	glm::vec4 color = glm::vec4(1, 1, 0, 1);
+	glm::vec2 finalPosition = initialPosition;
+
+	while (time <= 5) 
+	{
+		// calculate the position of the projectile at the time
+		finalPosition.x = initialPosition.x + initialVelocity.x * time;
+		finalPosition.y = (initialPosition.y + initialVelocity.y * time) + (0.5f * gravity * (time * time));
+
+		aie::Gizmos::add2DCircle(finalPosition, radius, segments, color);
+		time += timeStep;
+	}
+}
+
+glm::vec2 PhysicsSceneApp::calculateVelocity(glm::vec2 initialPosition, glm::vec2 finalPosition, float gravity, float time)
+{
+	glm::vec2 initialVelocity = glm::vec2(0, 0);
+
+	initialVelocity.x = (finalPosition.x - initialPosition.x) / time;
+	initialVelocity.y = (finalPosition.y - initialPosition.y - (0.5f * gravity * (time * time)) / time);
+
+	return initialVelocity;
 }
