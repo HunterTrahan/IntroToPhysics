@@ -1,81 +1,91 @@
-#include "PhysicsSceneApp.h"
-#include "Texture.h"
-#include "Font.h"
-#include "Input.h"
-#include "Sphere.h"
-#include <Gizmos.h>
+#include "PhysicsScene.h"
+#include "RigidBody.h"
+#include <list>
 
-PhysicsSceneApp::PhysicsSceneApp() 
+PhysicsScene::~PhysicsScene()
 {
+	for (auto actor : m_actors) {
+		delete actor;
+	}
 }
 
-PhysicsSceneApp::~PhysicsSceneApp() 
+void PhysicsScene::addActor(PhysicsObject* actor)
 {
+	m_actors.push_back(actor);
 }
 
-bool PhysicsSceneApp::startup() 
+void PhysicsScene::removeActor(PhysicsObject* actor)
 {
-	// increase the 2D line count to maximize the number of objects we can draw
-	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
-
-	m_2dRenderer = new aie::Renderer2D();
-
-	// TODO: remember to change this when redistributing a build!
-	// the following path would be used instead: "./font/consolas.ttf"
-	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
-
-	m_physicsScene = new PhysicsScene();
-	m_physicsScene->setGravity(glm::vec2(0, 0));
-	m_physicsScene->setTimeStep(0.01f);
-
-
-
-	return true;
+	for (auto i = m_actors.begin(); i < m_actors.end(); i++) 
+	{
+		if (*i == actor) 
+		{
+			m_actors.erase(i);
+		}
+	}
 }
 
-void PhysicsSceneApp::shutdown() 
+void PhysicsScene::update(float deltaTime)
 {
-	delete m_font;
-	delete m_2dRenderer;
+	// create a list of objects for which we've checked collisions
+	static std::list<PhysicsObject*> dirty;
+
+	// store how much time has accumulated since last update
+	static float accumulatedTime = 0.0f;
+	accumulatedTime += deltaTime;
+
+	// while enough time has accumulated...
+	while (accumulatedTime >= m_timeStep) 
+	{
+		// for each PhysicsObject in m_actors...
+		for (auto pActor : m_actors) {
+			// updated the physics of that object
+			pActor->fixedUpdate(m_gravity, m_timeStep);
+		}
+		// spend the time needed for that update
+		accumulatedTime -= m_timeStep;
+
+		// for every combination of actors...
+		for (auto actor : m_actors) 
+		{
+			for (auto other : m_actors) 
+			{
+				// if we aren't checking an actor's collision with itself
+				if (actor == other)
+					continue;
+				// if the actors haven't already been checked
+				if (std::find(dirty.begin(), dirty.end(), actor) != dirty.end() &&
+					std::find(dirty.begin(), dirty.end(), other) != dirty.end())
+					continue;
+				// if the actor and other are RigidBodies
+				RigidBody* actorRB = dynamic_cast<RigidBody*>(actor);
+				RigidBody* otherRB = dynamic_cast<RigidBody*>(other);
+				if (!actorRB || !otherRB)
+					continue;
+				// check the collision
+				if (actorRB->checkCollision(otherRB)) {
+					// apply the force of the collision
+					actorRB->applyForceToActor(otherRB, actorRB->getVelocity() * actorRB->getMass());
+					// add each actor to the dirty list
+					dirty.push_back(actor);
+					dirty.push_back(other);
+				}
+			}
+		}
+		dirty.clear();
+	}
 }
 
-void PhysicsSceneApp::update(float deltaTime) 
+void PhysicsScene::updateGizmos()
 {
-
-	// input example
-	aie::Input* input = aie::Input::getInstance();
-
-	// clear the buffer
-	aie::Gizmos::clear();
-
-	// update the PhysicsScene
-	m_physicsScene->update(deltaTime);
-	m_physicsScene->updateGizmos();
-
-	// exit the application
-	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
-		quit();
+	for (auto pActor : m_actors) {
+		pActor->makeGizmo();
+	}
 }
 
-void PhysicsSceneApp::draw() 
+void PhysicsScene::debugScene()
 {
-
-	// wipe the screen to the background colour
-	clearScreen();
-
-	// begin drawing sprites
-	m_2dRenderer->begin();
-
-	// draw your stuff here!
-	static float aspectRatio = 16 / 9.0f;
-	aie::Gizmos::draw2D(glm::ortho<float>(
-		-100.0f, 100.0f,
-		-100.0f / aspectRatio, 100.0f / aspectRatio,
-		-1.0f, 1.0f));
-
-	// output some text, uses the last used colour
-	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
-
-	// done drawing sprites
-	m_2dRenderer->end();
+	for (auto actor : m_actors) {
+		actor->debug();
+	}
 }
