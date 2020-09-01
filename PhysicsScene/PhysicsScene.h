@@ -21,6 +21,13 @@ class PhysicsScene
 		void setTimeStep(const float timeStep) { m_timeStep = timeStep; }
 		float getTimeStep() const { return m_timeStep; }
 
+		void checkForCollision();
+
+		static bool planeToPlane(PhysicsObject*, PhysicsObject*) { return false; }
+		static bool planeToSphere(PhysicsObject*, PhysicsObject*) { return false; }
+		static bool sphereToPlane(PhysicsObject*, PhysicsObject*) { return false; }
+		static bool sphereToSphere(PhysicsObject*, PhysicsObject*);
+
 	protected:
 		glm::vec2	m_gravity;
 		float		m_timeStep;

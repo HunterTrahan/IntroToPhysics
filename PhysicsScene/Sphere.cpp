@@ -16,7 +16,8 @@ void Sphere::makeGizmo()
 bool Sphere::checkCollision(PhysicsObject* other)
 {
 	Sphere* otherSphere = dynamic_cast<Sphere*>(other);
-	if (otherSphere) {
+	if (otherSphere) 
+	{
 		return glm::distance(m_position, otherSphere->getPosition()) < m_radius + otherSphere->getRadius();
 	}
 }
