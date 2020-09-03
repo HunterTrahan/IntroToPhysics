@@ -28,3 +28,17 @@ void Plane::makeGizmo()
 	glm::vec2 end = centerPoint - (perpendicular * lineSegmentLength);
 	aie::Gizmos::add2DLine(start, end, color);
 }
+
+void Plane::resolveCollision(RigidBody* other)
+{
+	glm::vec2 collisionNormal = m_normal;
+	glm::vec2 relativeVelocity = other->getVelocity();
+
+	float elasticity = 1;
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) / 
+					  (1 / other->getMass());
+
+	glm::vec2 force = collisionNormal * j;
+
+	other->applyForce(force);
+}
