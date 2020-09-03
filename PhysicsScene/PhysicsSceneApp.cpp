@@ -6,15 +6,16 @@
 #include "Plane.h"
 #include <Gizmos.h>
 
-PhysicsSceneApp::PhysicsSceneApp() {
-
+PhysicsSceneApp::PhysicsSceneApp()
+{
 }
 
-PhysicsSceneApp::~PhysicsSceneApp() {
-
+PhysicsSceneApp::~PhysicsSceneApp()
+{
 }
 
-bool PhysicsSceneApp::startup() {
+bool PhysicsSceneApp::startup() 
+{
 	// increase the 2D line count to maximize the number of objects we can draw
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
@@ -49,26 +50,28 @@ bool PhysicsSceneApp::startup() {
 	m_physicsScene->addActor(ball1);
 
 	Sphere* ball2 = new Sphere(glm::vec2(40.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
-		2.0f, 6.0f, glm::vec4(0, 1, 0, 1));
+		4.0f, 6.0f, glm::vec4(0, 1, 0, 1));
 	m_physicsScene->addActor(ball2);
 
 	Sphere* ball3 = new Sphere(glm::vec2(60.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
 		1.0f, 4.0f, glm::vec4(0, 0, 1, 1));
 	m_physicsScene->addActor(ball3);
 
-	Plane* floor = new Plane(glm::vec2(1.0f, -5.0f), 5.0f);
+	Plane* floor = new Plane(glm::normalize(glm::vec2(1.0f, -6.0f)), 20.0f);
 	m_physicsScene->addActor(floor);
 
 	return true;
 }
 
-void PhysicsSceneApp::shutdown() {
+void PhysicsSceneApp::shutdown() 
+{
 
 	delete m_font;
 	delete m_2dRenderer;
 }
 
-void PhysicsSceneApp::update(float deltaTime) {
+void PhysicsSceneApp::update(float deltaTime) 
+{
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
@@ -88,7 +91,8 @@ void PhysicsSceneApp::update(float deltaTime) {
 		quit();
 }
 
-void PhysicsSceneApp::draw() {
+void PhysicsSceneApp::draw() 
+{
 
 	// wipe the screen to the background colour
 	clearScreen();
@@ -119,7 +123,8 @@ void PhysicsSceneApp::setupContinuousDemo(glm::vec2 initialPosition, glm::vec2 i
 	glm::vec4 color = glm::vec4(1, 1, 0, 1);
 	glm::vec2 finalPosition = initialPosition;
 
-	while (time <= 5) {
+	while (time <= 5) 
+	{
 		// calculate the position of the projectile at the time
 		finalPosition.x = initialPosition.x + initialVelocity.x * time;
 		finalPosition.y = (initialPosition.y + initialVelocity.y * time) + (0.5f * gravity * (time * time));
