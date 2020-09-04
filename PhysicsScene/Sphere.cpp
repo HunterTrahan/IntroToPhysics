@@ -6,6 +6,7 @@ Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius,
 {
 	m_radius = radius;
 	m_color = color;
+	m_moment = 0.5f * mass * radius * radius;
 }
 
 void Sphere::makeGizmo()

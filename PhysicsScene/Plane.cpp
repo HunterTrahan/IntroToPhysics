@@ -1,9 +1,10 @@
 #include "Plane.h"
 #include <Gizmos.h>
 
-Plane::Plane() : PhysicsObject(PLANE)	
+Plane::Plane()
+	: PhysicsObject(PLANE)
 {
-	m_normal = glm::vec2(0.0f, 0.0f);
+	m_normal = glm::vec2(0.0f, 1.0f);
 	m_distanceToOrigin = 0.0f;
 }
 
@@ -12,10 +13,6 @@ Plane::Plane(glm::vec2 normal, float distanceToOrigin)
 {
 	m_normal = glm::normalize(normal);
 	m_distanceToOrigin = distanceToOrigin;
-}
-
-void Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
-{
 }
 
 void Plane::makeGizmo()
@@ -29,16 +26,16 @@ void Plane::makeGizmo()
 	aie::Gizmos::add2DLine(start, end, color);
 }
 
-void Plane::resolveCollision(RigidBody* other)
+void Plane::resolveCollision(RigidBody* other, glm::vec2 contact)
 {
 	glm::vec2 collisionNormal = m_normal;
 	glm::vec2 relativeVelocity = other->getVelocity();
 
 	float elasticity = 1;
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) / 
-					  (1 / other->getMass());
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) /
+		(1 / other->getMass());
 
 	glm::vec2 force = collisionNormal * j;
 
-	other->applyForce(force);
+	other->applyForce(force, contact - other->getPosition());
 }
