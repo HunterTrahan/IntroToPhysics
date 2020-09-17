@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Breakout", "Breakout\Breako
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsScene", "PhysicsScene\PhysicsScene.vcxproj", "{EA361CD8-9D96-4992-9152-14174ADC123A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsDemo", "PhysicsDemo\PhysicsDemo.vcxproj", "{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -67,6 +69,14 @@ Global
 		{EA361CD8-9D96-4992-9152-14174ADC123A}.Release|x64.Build.0 = Release|x64
 		{EA361CD8-9D96-4992-9152-14174ADC123A}.Release|x86.ActiveCfg = Release|Win32
 		{EA361CD8-9D96-4992-9152-14174ADC123A}.Release|x86.Build.0 = Release|Win32
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Debug|x64.ActiveCfg = Debug|x64
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Debug|x64.Build.0 = Debug|x64
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Debug|x86.Build.0 = Debug|Win32
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Release|x64.ActiveCfg = Release|x64
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Release|x64.Build.0 = Release|x64
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Release|x86.ActiveCfg = Release|Win32
+		{CFBD9A2E-CF7D-4BEE-BA57-329F2634C2DB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
