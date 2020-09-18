@@ -3,6 +3,7 @@
 #include "Font.h"
 #include "Input.h"
 #include "Plane.h"
+#include "Sphere.h"
 #include <Gizmos.h>
 
 PhysicsDemoApp::PhysicsDemoApp() 
@@ -60,6 +61,15 @@ bool PhysicsDemoApp::startup()
 	Plane* rWall = new Plane(glm::vec2(1.0f, 0.0f), 80.0f);
 	m_physicsScene->addActor(rWall);
 
+	Sphere* ball = new Sphere(initialPosition, initialVelocity,
+		10.0f, 10.0f, glm::vec4(1.0f, 0.0f, 10.0f, 1.0f));
+	m_physicsScene->addActor(ball);
+
+	Sphere* ball2 = new Sphere(glm::vec2(30.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
+		4.0f, 6.0f, glm::vec4(0, 1, 0, 1));
+	m_physicsScene->addActor(ball2);
+
+
 	return true;
 }
 
@@ -77,9 +87,6 @@ void PhysicsDemoApp::update(float deltaTime)
 
 	// clear the buffer
 	aie::Gizmos::clear();
-
-	/*aie::Gizmos::add2DAABB(glm::vec2(-60.0f, 0.0f), glm::vec2(4.0f, 4.0f), glm::vec4(1, 1, 1, 1));
-	aie::Gizmos::add2DAABB(glm::vec2(60.0f, 0.0f), glm::vec2(4.0f, 4.0f), glm::vec4(1, 1, 1, 1));*/
 
 	// update the PhysicsScene
 	m_physicsScene->update(deltaTime);
