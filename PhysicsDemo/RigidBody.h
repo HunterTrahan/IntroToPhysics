@@ -24,6 +24,7 @@ class RigidBody : public PhysicsObject
 		float getAngularVelocity() { return m_angularVelocity; }
 		float getMoment() { return m_moment; }
 
+		void setPosition(glm::vec2 position) { m_position = position; }
 		float getLinearDrag() { return m_linearDrag; }
 		void setLinearDrag(float value) { m_linearDrag = value; }
 		float getAngularDrag() { return m_angularDrag; }

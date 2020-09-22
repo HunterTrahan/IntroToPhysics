@@ -24,4 +24,5 @@ class PhysicsDemoApp : public aie::Application
 		aie::Renderer2D* m_2dRenderer;
 		aie::Font* m_font;
 		PhysicsScene* m_physicsScene;
+		MouseBehavior* m_mouse;
 };

@@ -2,6 +2,7 @@
 #include "RigidBody.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include <Gizmos.h>
 #include <list>
 
 PhysicsScene::~PhysicsScene()
@@ -48,6 +49,7 @@ void PhysicsScene::update(float deltaTime)
 		// check for collisions
 		checkForCollision();
 	}
+	mouse->update();
 }
 
 void PhysicsScene::updateGizmos()
@@ -66,6 +68,28 @@ void PhysicsScene::debugScene()
 	}
 }
 
+//Check for collision 
+bool PhysicsScene::checkMouseCollision()
+{
+	aie::Gizmos::add2DCircle(mouse->getMousePosition(), mouse->getCollisonRadius(), 10, {8,8,0,3});
+	std::cout << mouse->getMousePosition().x << "," << mouse->getMousePosition().y << std::endl;
+	Sphere* sphere = nullptr;
+	for (int i = 0; i < m_actors.size(); i++)
+	{
+		sphere = dynamic_cast<Sphere*>(m_actors[i]);
+		if (mouse != nullptr && sphere != nullptr)
+		{
+			// check collision
+			if (glm::distance(mouse->getMousePosition(), sphere->getPosition()) < mouse->getCollisonRadius() + sphere->getRadius())
+			{
+				mouse->onMouseCollison(sphere);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
 
 static fn collisionFunctions[] =
@@ -82,6 +106,7 @@ void PhysicsScene::checkForCollision()
 	// check for collisions against all objects except this one
 	for (int outer = 0; outer < actorCount - 1; outer++)
 	{
+
 		for (int inner = outer + 1; inner < actorCount; inner++)
 		{
 			PhysicsObject* object1 = m_actors[outer];

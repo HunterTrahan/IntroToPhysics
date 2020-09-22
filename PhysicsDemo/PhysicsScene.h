@@ -1,12 +1,13 @@
 #pragma once
 #include "PhysicsObject.h"
 #include "glm\ext.hpp"
+#include "MouseBehavior.h"
 #include <vector>
 
 class PhysicsScene
 {
 	public:
-		PhysicsScene() : m_timeStep(0.01f), m_gravity(glm::vec2(0.0f, 0.0f)) {}
+		PhysicsScene(MouseBehavior* mouseRef) : m_timeStep(0.01f), m_gravity(glm::vec2(0.0f, 0.0f)) { mouse = mouseRef; }
 		~PhysicsScene();
 
 		void addActor(PhysicsObject* actor);
@@ -14,6 +15,7 @@ class PhysicsScene
 		void update(float deltaTime);
 		void updateGizmos();
 		void debugScene();
+		bool checkMouseCollision();
 
 		void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 		glm::vec2 getGravity() const { return m_gravity; }
@@ -31,6 +33,7 @@ class PhysicsScene
 	protected:
 		glm::vec2	m_gravity;
 		float		m_timeStep;
+		MouseBehavior* mouse;
 
 		std::vector<PhysicsObject*>	m_actors;
 };

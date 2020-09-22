@@ -18,13 +18,7 @@ PhysicsDemoApp::~PhysicsDemoApp()
 
 bool PhysicsDemoApp::startup() 
 {
-	//m_2dRenderer = new aie::Renderer2D();
-
-	//// TODO: remember to change this when redistributing a build!
-	//// the following path would be used instead: "./font/consolas.ttf"
-	//m_font = new aie::Font("../bin/font/consolas.ttf", 32);
-
-		// increase the 2D line count to maximize the number of objects we can draw
+	// increase the 2D line count to maximize the number of objects we can draw
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
 	m_2dRenderer = new aie::Renderer2D();
@@ -37,13 +31,14 @@ bool PhysicsDemoApp::startup()
 	glm::vec2 gravity = glm::vec2(0.0f, -80.0f);
 
 	// initialize the PhysicsScene
-	m_physicsScene = new PhysicsScene();
+	m_mouse = new MouseBehavior(5, this);
+	m_physicsScene = new PhysicsScene(m_mouse);
 	m_physicsScene->setGravity(gravity);
 	m_physicsScene->setTimeStep(0.01f);
 
 	// initialize position and velocity
-	glm::vec2 initialPosition = glm::vec2(-60.0f, 0.0f);
-	glm::vec2 finalPosition = glm::vec2(60.0f, 0.0f);
+	glm::vec2 initialPosition = glm::vec2(0.0f, 0.0f);
+	glm::vec2 finalPosition = glm::vec2(0.0f, 0.0f);
 	glm::vec2 initialVelocity = calculateVelocity(initialPosition, finalPosition, gravity.y, 5.0f);
 
 	// simulate using kinematic formulae
@@ -68,7 +63,6 @@ bool PhysicsDemoApp::startup()
 	Sphere* ball2 = new Sphere(glm::vec2(30.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
 		4.0f, 6.0f, glm::vec4(0, 1, 0, 1));
 	m_physicsScene->addActor(ball2);
-
 
 	return true;
 }
@@ -95,6 +89,11 @@ void PhysicsDemoApp::update(float deltaTime)
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	if (input->isMouseButtonDown(0))
+	{
+		m_physicsScene->checkMouseCollision();
+	}
 }
 
 void PhysicsDemoApp::draw()
@@ -126,6 +125,7 @@ void PhysicsDemoApp::setupContinuousDemo(glm::vec2 initialPosition, glm::vec2 in
 	float timeStep = 0.5f;
 	float radius = 3.0f;
 	int segments = 12;
+
 	glm::vec4 color = glm::vec4(1, 1, 0, 1);
 	glm::vec2 finalPosition = initialPosition;
 
