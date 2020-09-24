@@ -13,11 +13,13 @@ PhysicsScene::~PhysicsScene()
 	}
 }
 
+// Add actors to the scene
 void PhysicsScene::addActor(PhysicsObject* actor)
 {
 	m_actors.push_back(actor);
 }
 
+// Remove actors from the scene
 void PhysicsScene::removeActor(PhysicsObject* actor)
 {
 	for (auto i = m_actors.begin(); i < m_actors.end(); i++)
@@ -29,6 +31,7 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 	}
 }
 
+// Update the scene
 void PhysicsScene::update(float deltaTime)
 {
 	// store how much time has accumulated since last update
@@ -49,9 +52,10 @@ void PhysicsScene::update(float deltaTime)
 		// check for collisions
 		checkForCollision();
 	}
-	mouse->update();
+	m_mouse->update();
 }
 
+// Update Gizmos
 void PhysicsScene::updateGizmos()
 {
 	for (auto pActor : m_actors)
@@ -60,29 +64,21 @@ void PhysicsScene::updateGizmos()
 	}
 }
 
-void PhysicsScene::debugScene()
-{
-	for (auto actor : m_actors)
-	{
-		actor->debug();
-	}
-}
-
-//Check for collision 
+// Check for mouse collision 
 bool PhysicsScene::checkMouseCollision()
 {
-	aie::Gizmos::add2DCircle(mouse->getMousePosition(), mouse->getCollisonRadius(), 10, {8,8,0,3});
-	std::cout << mouse->getMousePosition().x << "," << mouse->getMousePosition().y << std::endl;
+	//aie::Gizmos::add2DCircle(mouse->getMousePosition(), mouse->getCollisonRadius(), 10, {8,8,0,3});
+	std::cout << m_mouse->getMousePosition().x << "," << m_mouse->getMousePosition().y << std::endl;
 	Sphere* sphere = nullptr;
 	for (int i = 0; i < m_actors.size(); i++)
 	{
 		sphere = dynamic_cast<Sphere*>(m_actors[i]);
-		if (mouse != nullptr && sphere != nullptr)
+		if (m_mouse != nullptr && sphere != nullptr)
 		{
 			// check collision
-			if (glm::distance(mouse->getMousePosition(), sphere->getPosition()) < mouse->getCollisonRadius() + sphere->getRadius())
+			if (glm::distance(m_mouse->getMousePosition(), sphere->getPosition()) < m_mouse->getCollisonRadius() + sphere->getRadius())
 			{
-				mouse->onMouseCollison(sphere);
+				m_mouse->onMouseCollison(sphere);
 				return true;
 			}
 		}
@@ -92,12 +88,15 @@ bool PhysicsScene::checkMouseCollision()
 
 typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
 
+
+// Holds the collision functions
 static fn collisionFunctions[] =
 {
 	PhysicsScene::planeToPlane, PhysicsScene::planeToSphere,
 	PhysicsScene::sphereToPlane, PhysicsScene::sphereToSphere
 };
 
+// Check for collision
 void PhysicsScene::checkForCollision()
 {
 	// get the number of actors in the scene
@@ -126,6 +125,7 @@ void PhysicsScene::checkForCollision()
 	}
 }
 
+// Plane to Plane collision
 bool PhysicsScene::planeToPlane(PhysicsObject* object1, PhysicsObject* object2)
 {
 	Plane* plane1 = dynamic_cast<Plane*>(object1);
@@ -140,12 +140,14 @@ bool PhysicsScene::planeToPlane(PhysicsObject* object1, PhysicsObject* object2)
 	return false;
 }
 
+// Plane to Sphere collision
 bool PhysicsScene::planeToSphere(PhysicsObject* object1, PhysicsObject* object2)
 {
 	sphereToPlane(object2, object1);
 	return false;
 }
 
+// Plane to Sphere Collision
 bool PhysicsScene::sphereToPlane(PhysicsObject* object1, PhysicsObject* object2)
 {
 	Sphere* sphere = dynamic_cast<Sphere*>(object1);
@@ -176,6 +178,7 @@ bool PhysicsScene::sphereToPlane(PhysicsObject* object1, PhysicsObject* object2)
 	return false;
 }
 
+// Sphere to Sphere Collision
 bool PhysicsScene::sphereToSphere(PhysicsObject* object1, PhysicsObject* object2)
 {
 	Sphere* sphere1 = dynamic_cast<Sphere*>(object1);

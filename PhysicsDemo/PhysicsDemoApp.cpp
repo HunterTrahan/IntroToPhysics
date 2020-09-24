@@ -16,6 +16,7 @@ PhysicsDemoApp::~PhysicsDemoApp()
  
 }
 
+// On start up do the following
 bool PhysicsDemoApp::startup() 
 {
 	// increase the 2D line count to maximize the number of objects we can draw
@@ -41,38 +42,43 @@ bool PhysicsDemoApp::startup()
 	glm::vec2 finalPosition = glm::vec2(0.0f, 0.0f);
 	glm::vec2 initialVelocity = calculateVelocity(initialPosition, finalPosition, gravity.y, 5.0f);
 
-	// simulate using kinematic formulae
-	setupContinuousDemo(initialPosition, initialVelocity, gravity.y);
-
+	// add a plane
 	Plane* floor = new Plane(glm::vec2(0.0f, 1.0f), -50.0f);
 	m_physicsScene->addActor(floor);	
 	
+	// add a plane
 	Plane* roof = new Plane(glm::vec2(0.0f, 1.0f), 50.0f);
 	m_physicsScene->addActor(roof);
 	
+	// add a plane
 	Plane* lWall = new Plane(glm::vec2(1.0f, 0.0f), -80.0f);
 	m_physicsScene->addActor(lWall);
 
+	// add a plane
 	Plane* rWall = new Plane(glm::vec2(1.0f, 0.0f), 80.0f);
 	m_physicsScene->addActor(rWall);
 
+	// add a sphere
 	Sphere* ball = new Sphere(initialPosition, initialVelocity,
 		10.0f, 10.0f, glm::vec4(1.0f, 0.0f, 10.0f, 1.0f));
 	m_physicsScene->addActor(ball);
 
+	// add a sphere
 	Sphere* ball2 = new Sphere(glm::vec2(30.0f, 0.0f), glm::vec2(-30.0f, 0.0f),
-		4.0f, 6.0f, glm::vec4(0, 1, 0, 1));
+		10.0f, 10.0f, glm::vec4(0, 1, 0, 1));
 	m_physicsScene->addActor(ball2);
 
 	return true;
 }
 
+// On shutdown delete the following
 void PhysicsDemoApp::shutdown() 
 {
 	delete m_font;
 	delete m_2dRenderer;
 }
 
+// Update the scene
 void PhysicsDemoApp::update(float deltaTime)
 {
 
@@ -90,57 +96,39 @@ void PhysicsDemoApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
+	// if the left mouse button is down
 	if (input->isMouseButtonDown(0))
 	{
+		// check for collision
 		m_physicsScene->checkMouseCollision();
 	}
 }
 
+// Draw to the screen
 void PhysicsDemoApp::draw()
 {
 
-	//Wipe the screen to the background colour
+	// Wipe the screen to the background colour
 	clearScreen();
 
-	//Begin drawing
+	// Begin drawing
 	m_2dRenderer->begin();
 
-	//Draw your stuff here!
+	// Draw your stuff here!
 	static float aspectRatio = 16 / 9.0f;
 	aie::Gizmos::draw2D(glm::ortho<float>(
 		-100.0f, 100.0f,
 		-100.0f / aspectRatio, 100.0f / aspectRatio,
 		-1.0f, 1.0f));
 	
-	//Output some text, uses the last used colour
+	// Output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 
-	//Finish drawing
+	// Finish drawing
 	m_2dRenderer->end();
 }
 
-void PhysicsDemoApp::setupContinuousDemo(glm::vec2 initialPosition, glm::vec2 initialVelocity, float gravity)
-{
-	float time = 0.0f;
-	float timeStep = 0.5f;
-	float radius = 3.0f;
-	int segments = 12;
-
-	glm::vec4 color = glm::vec4(1, 1, 0, 1);
-	glm::vec2 finalPosition = initialPosition;
-
-	while (time <= 5)
-	{
-		// calculate the position of the projectile at the time
-		finalPosition.x = initialPosition.x + initialVelocity.x * time;
-		finalPosition.y = (initialPosition.y + initialVelocity.y * time) + (0.5f * gravity * (time * time));
-
-		aie::Gizmos::add2DCircle(finalPosition, radius, segments, color);
-		time += timeStep;
-	}
-}
-
-
+// Find the initial velocity
 glm::vec2 PhysicsDemoApp::calculateVelocity(glm::vec2 initialPosition, glm::vec2 finalPosition, float gravity, float time)
 {
 	glm::vec2 initialVelocity = glm::vec2(0, 0);

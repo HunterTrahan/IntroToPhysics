@@ -1,14 +1,20 @@
 #include "PhysicsDemoApp.h"
 
-int main() {
-	
-	// allocation
+int main() 
+{
+	///
+	/// Allocation
+	///
 	auto app = new PhysicsDemoApp();
 
-	// initialise and loop
-	app->run("AIE", 1280, 720, false);
+	///
+	/// Initialise and loop
+	///
+	app->run("Hunter Physics Demo", 1280, 720, false);
 
-	// deallocation
+	///
+	/// Deallocation
+	///
 	delete app;
 
 	return 0;
